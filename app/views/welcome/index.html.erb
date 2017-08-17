@@ -1,0 +1,96 @@
+<!-- Bootstrap CDN(CSS & JS) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+<!-- CSS for use only this page -->
+    <style>
+        body, h1 { color: white; }
+        body, html { height: 100%; font-family: "Noto Sans KR","Helvetica Neue",Helvetica,Arial,sans-serif; }
+        .bgimg {
+            background-image: url('assets/img/index.jpg');
+            min-height: 100%;
+            background-position: center;
+            background-size: cover;
+        }
+        
+        a {
+            text-decoration:none !important;
+            border: 0;
+        }
+        
+        img {
+          background-color: transparent;
+        }
+        
+    </style>
+
+<!-- Rending page design -->
+    <div class="bgimg w3-display-container w3-text-white">
+      <div class="w3-display-middle">
+        <h1 class="w3-jumbo w3-animate-top">DIARY FOR</h1>
+        <hr style="margin:auto;width:40%; border:1px solid white;">
+        <p class="w3-large w3-center w3-padding">당신만을 위한 단 하나의 일기</p>
+        <div class="w3-center">
+            <a id="kakao-login-btn"></a>
+        </div>
+      </div>
+    </div>
+<!--// Reding page end -->
+
+<!-- Form that temporary save user's information -->
+  <%= form_for(@user, url: "/newUser", html: { id: "createUser", method: :post }) do |f| %>
+    <%= f.hidden_field :id %>
+    <%= f.hidden_field :uid %>
+    <%= f.hidden_field :name %>
+    <%= f.hidden_field :snstype %>
+  <% end %>
+  
+<!-- JavaScript for use only this page -->
+    <script type='text/javascript'>
+      $(document).ready(function(){
+      //---- Kakao user login status check ----  
+        Kakao.Auth.getStatus(function(statusObj){
+          if(statusObj.status === 'connected'){
+            // If already logged in, move to main page
+            window.location = '/logout';
+          } else {
+            console.log(statusObj.status);
+          }
+        });
+        
+      //---- Create login button of kakao ----
+        Kakao.Auth.createLoginButton({
+          container: '#kakao-login-btn',
+          persistRefreshToken: true,
+          success: function(authObj) {
+            //alert(JSON.stringify(authObj));
+            userInfoRequest();
+          },
+          fail: function(err) {
+             console.log(JSON.stringify(err));
+          }
+        });
+        
+      });
+      // document.ready end ---------------------------
+
+      function userInfoRequest(){
+        Kakao.API.request({
+          url: '/v1/user/me',
+          data: {propertyKeys: ["kaccount_email", "nickname"]},
+          success: function(res) {
+            document.getElementById("user_id").setAttribute("value", res.id);
+            document.getElementById("user_uid").setAttribute("value", res.kaccount_email);
+            document.getElementById("user_name").setAttribute("value", res.properties.nickname);
+            document.getElementById("user_snstype").setAttribute("value", "kakao");
+            document.getElementById("createUser").submit();
+          },
+          fail: function(error) {
+            console.log(JSON.stringify(error));
+          }
+        });
+      }
+    </script>
+
+
