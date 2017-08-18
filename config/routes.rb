@@ -7,6 +7,14 @@ Rails.application.routes.draw do
   
   get 'logout' => 'welcome#logout'
   post 'newUser' => 'welcome#create'
+  get 'setting' => 'welcome#setting'
+  
+  post 'save_id' => 'welcome#session_rec'
+  post 'nicknameSave' => 'welcome#update_name'
+  get 'main' => 'main#main'
+  
+  post 'new_schedule' => 'main#new_schedule'
+  
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

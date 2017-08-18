@@ -1,0 +1,248 @@
+ <% @date = Time.now + 32400 %>
+ 
+<!-- Navbar -->
+<div class="w3-top">
+ <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
+  <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
+  <a href="/main" class="w3-bar-item w3-button w3-padding-large w3-theme-d4" title="Home"><i class="fa fa-book w3-margin-right"></i>Diary for <%= @username %></a>
+  <a class="w3-bar-item w3-hide-small w3-padding-large" title="Month, Year"><%= @date.year%>년 <%= @date.month%>월</a>
+  <!--<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="News"><i class="fa fa-globe"></i></a>
+  <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user"></i></a>
+  <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Messages"><i class="fa fa-envelope"></i></a>-->
+  <!--<div class="w3-dropdown-hover w3-hide-small">
+    <button class="w3-button w3-padding-large" title="Notifications"><i class="fa fa-bell"></i><span class="w3-badge w3-right w3-small w3-green">3</span></button>     
+    <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
+      <a href="#" class="w3-bar-item w3-button">One new friend request</a>
+      <a href="#" class="w3-bar-item w3-button">John Doe posted on your wall</a>
+      <a href="#" class="w3-bar-item w3-button">Jane likes your post</a>
+    </div>
+  </div>-->
+  <a class="w3-bar-item w3-button w3-hide-small w3-right w3-padding-large w3-hover-white signout" title="Sign Out">Sign Out<i class="fa fa-sign-out w3-margin-left"></i></a>
+ </div>
+</div>
+
+<!-- Navbar on small screens -->
+<div id="nav" class="w3-bar-block w3-theme-d2 w3-hide w3-hide-large w3-hide-medium w3-large">
+  <a href="/main" class="w3-bar-item w3-button w3-padding-large w3-theme-d4" title="Home"><i class="fa fa-book w3-margin-right"></i>Diary for <%= @username %></a>
+  <a class="w3-bar-item w3-button w3-padding-large signout" title="SignOut"><i class="fa fa-sign-out w3-margin-right"></i>Sign Out</a>
+</div>
+<!--// Complete work for menu -->
+
+<!-- Page Container -->
+<div class="w3-container w3-content" style="max-width:1400px;margin-top:70px">    
+  <!-- The Grid -->
+  <div class="w3-row">
+    <!-- Left Column -->
+    <div class="w3-col m3">
+      <!-- Profile -->
+      <div class="w3-card-2 w3-round w3-white">
+        <div class="w3-container">
+         <h4 class="w3-center"><%= @date.day%>일</h4><p class="w3-center">오늘의 목표</p>
+         <hr>
+            <% 
+                if @goal.kind_of?(Array)
+                    @goal.each do |g|
+            %>
+                    <p><i class="fa fa-hashtag fa-fw w3-margin-right w3-text-theme"></i> <%= g %></p>
+            <% 
+                    end
+                else 
+            %>
+                <p><i class="fa fa-hashtag fa-fw w3-margin-right w3-text-theme"></i> <%= @goal %></p>
+            <% end %>
+        </div>
+      </div>
+      <br>
+      
+      <!-- Accordion -->
+      <div class="w3-card-2 w3-round">
+        <div class="w3-white">
+		  <div class="w3-container w3-blue-grey">
+          <h6 class="w3-block w3-left-align"><i class="fa fa-calendar-check-o fa-fw w3-margin-right"></i> My Events</h6>
+		  </div>
+          <div id="events" class="w3-container">
+            <p><i class="fa fa-tag w3-margin-right"></i>Some other text..</p>
+			<p><i class="fa fa-tag w3-margin-right"></i>Some other text..</p>
+			<p><i class="fa fa-tag w3-margin-right"></i>Some other text..</p>
+          </div>
+        </div>      
+      </div>
+      <br>
+      
+      <!-- Graph of week --> 
+      <div class="w3-card-2 w3-round w3-white w3-hide-small">
+        <div class="w3-container">
+          <p>Graph is about goal of this week</p>
+          <div class="w3-light-grey w3-round w3-large w3-margin-top w3-margin-bottom">
+			<div class="w3-container w3-round w3-blue-grey" style="width:25%">25%</div>
+		  </div>
+        </div>
+      </div>
+      
+      <!-- Alert Box -->
+<!-- Applicate to modal
+      <div class="w3-container w3-display-container w3-round w3-theme-l4 w3-border w3-theme-border w3-margin-bottom w3-hide-small">
+        <span onclick="this.parentElement.style.display='none'" class="w3-button w3-theme-l3 w3-display-topright">
+          <i class="fa fa-remove"></i>
+        </span>
+        <p><strong>Hey!</strong></p>
+        <p>People are looking at your profile. Find out who.</p>
+      </div>
+ -->
+    <!-- End Left Column -->
+    </div>
+    
+    <!-- Middle Column -->
+    <div class="w3-col m6">
+      <div class="w3-row-padding">
+        <div class="w3-col m12">
+          <div class="w3-card-2 w3-round w3-white">
+            <div class="w3-container w3-padding">
+              <h6 class="w3-opacity">Registering to schedule</h6>
+			<!-- Form is related registering to schedule -->
+              <%= form_for(@schedule, url: "/new_schedule", html: { method: :post, class: "w3-contatiner w3-margin-left w3-margin-right"}) do |f| %>
+      				<p>
+      					<%= f.label :title, 'Simple title' %>
+      					<%= f.text_field :title, class: "w3-input w3-hover-shadow", placeholder: "Input the simple title of schedule" %>
+      				</p>
+      				<p>
+      				    <%= f.label :content, 'Content' %>
+      				    <%= f.text_field :content, class: "w3-input w3-hover-shadow", placeholder: "Input the content of schedule" %>
+      				</p>
+      				<p class="w3-cell-row">
+      					<label class="w3-cell">Schedule Time</label>
+      					<input id="startTime" class="sTime w3-input w3-cell w3-hover-shadow" type="text" placeholder="Start Time" readonly/>
+      					<label class="w3-cell">to</label>
+      					<input id="endTime" class="sTime w3-input w3-cell w3-hover-shadow" type="text" placeholder="End Time" readonly/>
+      					<%= f.hidden_field :times %>
+      				</p>
+      				<p>
+      					<button id="scheduleSubmit" type="button" class="w3-button w3-theme w3-right"><i class="fa fa-pencil"></i>  Addition</button>
+      				</p>
+      			  <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% if @sc.kind_of?(Array) %>
+          <% @sc.each do |sc| %>
+                <div class="w3-container w3-card-2 w3-white w3-round w3-margin"><br>
+                      <span class="w3-right w3-opacity"><%= sc[0]%></span>
+                  <h4><%= sc[1]%></h4>
+                  <hr class="w3-clear">
+                  <p><%= sc[2]%></p>
+                  <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom w3-right"><i class="fa fa-check-square-o"></i> Complate?</button> 
+                </div>
+          <% end %>
+      <%else%>
+            <div class="w3-container w3-card-2 w3-white w3-round w3-margin"><br>
+              <h4>Welcome!</h4>
+              <hr class="w3-clear">
+              <p>환영합니다. 스케줄을 입력해 보세요!</p>
+            </div>
+      <% end %>
+      
+    <!-- End Middle Column -->
+    </div>
+    
+    <!-- Right Column -->
+    <div class="w3-col m3">
+		<div class="w3-card-2 w3-round w3-white w3-center">		
+			<form action="#">
+				<div class="w3-container">
+				  <h6><strong>Diary</strong></h6>
+				  <p><textarea class="w3-input w3-hover-shadow" rows="5" cols="120" style="resize:none;" placeholder="Please input the comment about today."></textarea></p>
+				</div>
+				<hr>
+				<div class="w3-container goalsWrap">
+					<div class="w3-bar">
+						<span>Goals of tomorrow</span>
+						<a id="addGoal" class="w3-button" title="Decline"><i class="fa fa-plus"></i></a>
+					</div>
+				  <input class="w3-input w3-hover-shadow" type="text" placeholder="goal1" />
+				</div>
+				<button class="w3-button w3-green w3-section w3-center" title="save"><i class="fa fa-check w3-margin-right"></i>Save</button>
+			</form>
+        </div>
+    <!-- End Right Column -->
+    </div>
+    
+  <!-- End Grid -->
+  </div>
+  
+<!-- End Page Container -->
+</div>
+<br>
+
+<!-- 시간 남으면 하자 -->
+<!--
+	<footer class="w3-container w3-theme-d5">
+	  <p class="w3-right">Created by DarkClouds</p>
+	</footer>
+-->
+<script>
+	// Used to toggle the menu on smaller screens when clicking on the menu button
+	function openNav() {
+		var x = document.getElementById("nav");
+		if (x.className.indexOf("w3-show") == -1) {
+			x.className += " w3-show";
+		} else { 
+			x.className = x.className.replace(" w3-show", "");
+		}
+	}
+
+	var startTimeDialog = new mdDateTimePicker.default({
+	  type: 'time'
+	});
+	startTimeDialog.time = moment();
+	var startTime = document.getElementById('startTime');
+	startTimeDialog.trigger = startTime;
+	startTime.addEventListener('click', function() {
+		startTimeDialog.toggle();	
+	});
+	startTime.addEventListener('onOk', function() {
+		this.value = moment(startTimeDialog.time.toString(), "ddd MMM D YYYY HH:mm:ss ").format("A HH:mm");
+	});
+
+
+	var endTimeDialog = new mdDateTimePicker.default({
+	  type: 'time'
+	});
+	endTimeDialog.time = moment();
+	var endTimeToggle = document.getElementById('endTime');
+	endTimeDialog.trigger = endTime;
+	endTimeToggle.addEventListener('click', function() {
+	  endTimeDialog.toggle();
+	});
+	endTimeToggle.addEventListener('onOk', function() {
+	  this.value = this.value = moment(endTimeDialog.time.toString(), "ddd MMM D YYYY HH:mm:ss ").format("A HH:mm");
+	});
+
+
+
+	$(document).ready(function(){
+		$('#addGoal').click(function(){
+			//this.has('i').children().removeClass("fa-plus").addClass("fa-remove");
+			$('.goalsWrap').append('<input class="w3-input w3-hover-shadow" type="text" placeholder="goal1" />');
+		});
+		
+		$('.signout').click(function(){
+		    Kakao.Auth.logout(function(){
+                window.location = "/";
+            });
+		});
+		
+		$('#scheduleSubmit').click(function(){
+		    if ( $('#schedule_title').val() == "" || $('#schedule_content').val() == "" || $('#startTime').val() == "" || $('#endTime').val() == "" ){
+		        alert("스케줄 입력에 공백이 있습니다.");
+		    } else {
+		        var times = $('#startTime').val() + "~" + $('#endTime').val();
+		        $('#schedule_times').val(times);
+		        $("#new_schedule").submit();
+		    }
+		});
+	});
+	
+	
+
+</script>

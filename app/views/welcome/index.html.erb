@@ -8,7 +8,7 @@
         body, h1 { color: white; }
         body, html { height: 100%; font-family: "Noto Sans KR","Helvetica Neue",Helvetica,Arial,sans-serif; }
         .bgimg {
-            background-image: url('assets/img/index.jpg');
+            background-image: url('assets/images/index.jpg');
             min-height: 100%;
             background-position: center;
             background-size: cover;
@@ -39,7 +39,7 @@
 <!--// Reding page end -->
 
 <!-- Form that temporary save user's information -->
-  <%= form_for(@user, url: "/newUser", html: { id: "createUser", method: :post }) do |f| %>
+  <%= form_for(@user, url: "/", html: { id: "userInfo", method: :post }) do |f| %>
     <%= f.hidden_field :id %>
     <%= f.hidden_field :uid %>
     <%= f.hidden_field :name %>
@@ -53,7 +53,7 @@
         Kakao.Auth.getStatus(function(statusObj){
           if(statusObj.status === 'connected'){
             // If already logged in, move to main page
-            window.location = '/logout';
+            userInfoRequest("save_id");
           } else {
             console.log(statusObj.status);
           }
@@ -65,7 +65,7 @@
           persistRefreshToken: true,
           success: function(authObj) {
             //alert(JSON.stringify(authObj));
-            userInfoRequest();
+            userInfoRequest("newUser");
           },
           fail: function(err) {
              console.log(JSON.stringify(err));
@@ -75,16 +75,17 @@
       });
       // document.ready end ---------------------------
 
-      function userInfoRequest(){
+      function userInfoRequest(targetUrl){
         Kakao.API.request({
           url: '/v1/user/me',
           data: {propertyKeys: ["kaccount_email", "nickname"]},
           success: function(res) {
+            document.getElementById("userInfo").action = "/" + targetUrl;
             document.getElementById("user_id").setAttribute("value", res.id);
             document.getElementById("user_uid").setAttribute("value", res.kaccount_email);
             document.getElementById("user_name").setAttribute("value", res.properties.nickname);
             document.getElementById("user_snstype").setAttribute("value", "kakao");
-            document.getElementById("createUser").submit();
+            document.getElementById("userInfo").submit();
           },
           fail: function(error) {
             console.log(JSON.stringify(error));
