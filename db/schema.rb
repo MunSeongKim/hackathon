@@ -14,10 +14,10 @@
 ActiveRecord::Schema.define(version: 20170817201434) do
 
   create_table "days", force: :cascade do |t|
-    t.integer  "id_id"
-    t.date     "day",        null: false
+    t.integer  "user_id"
     t.string   "uid",        null: false
     t.string   "name",       null: false
+    t.date     "day",        null: false
     t.text     "goal"
     t.text     "diary"
     t.float    "score"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(version: 20170817201434) do
     t.datetime "updated_at", null: false
   end
 
-  add_index "days", ["day"], name: "index_days_on_day", unique: true
+  add_index "days", ["day", "id", "uid"], name: "index_days_on_day_and_id_and_uid", unique: true
 
   create_table "schedules", force: :cascade do |t|
     t.integer  "day_id"
@@ -33,10 +33,12 @@ ActiveRecord::Schema.define(version: 20170817201434) do
     t.string   "times"
     t.string   "title"
     t.string   "content"
-    t.string   "check"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.boolean  "check",      default: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
   end
+
+  add_index "schedules", ["id", "day_id", "day"], name: "index_schedules_on_id_and_day_id_and_day", unique: true
 
   create_table "users", force: :cascade do |t|
     t.string   "uid",        null: false

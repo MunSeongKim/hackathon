@@ -3,52 +3,83 @@ class MainController < ApplicationController
         @user = User.find(session[:id])
         @username = @user[:name]
         
-        @goal = Day.find_by(uid: session[:id])[:goal]
+        # For checking first comming & searching schedule is related today
+        @days = Day.order(day: :desc).find_by(user_id: session[:id])
+        
+        @diary = @days[:diary]
+        
+        @date = @days[:day].to_s
+        @year = @date.split("-")[0];
+        @month = @date.split("-")[1];
+        @day = @date.split("-")[2];
+        
+        # Part of checking first comming
+        @goal = @days[:goal]
         if @goal.nil?
             @goal = "처음 오셨군요..."
         else 
             @goal = @goal.split("!")
         end
         
+        # Part of rendering schedule related day
+        date = @days[:day]
+        @sc = Schedule.order(id: :desc).where(day: date).select(:id, :times, :title, :content, :check).to_a
         
-        date = Day.find_by(uid: session[:id])
-        @sc = Schedule.where(day: date.day).pluck(:times, :title, :content)
+        # For graph is about goal of this week
+        checkCnt = Schedule.where(day: date, check: true).count
+        totalCnt = Schedule.where(day: date).count
+        if totalCnt != 0
+            @scheduleRate = ((checkCnt.to_f / totalCnt.to_f) * 100).to_i
+        else
+            @scheduleRate = 0
+        end
         
+        # For input form
         @schedule = Schedule.new
+        @editSchedule = Schedule.new
     end
     
+    # Create new schedule
     def new_schedule
-        findDay = Day.find_by(uid: session[:id])[:day]
+        # Getting Days model object for create schedule
+        paramDay = schedule_params[:day]
+        findDay = Day.find_by(day: paramDay)
         
-        @schedule = Schedule.find_by(day: findDay)
+        # create schedule
+        @schedule = findDay.schedules.create(schedule_params)
         
-        if @schedule.nil?
-            @schedule = Schedule.new
-            @schedule[:title] = schedule_params[:title]
-            @schedule[:content] = schedule_params[:content]
-            @schedule[:times] = schedule_params[:times]
-            @schedule[:day] = findDay
-        else
-            @schedule[:title] = schedule_params[:title]
-            @schedule[:content] = schedule_params[:content]
-            @schedule[:times] = schedule_params[:times]
-        end
+        redirect_to '/main'
+    end
+    
+    def save_check
+        Schedule.find(params[:id]).update(check: true)
         
-        begin
-            respond_to do |format|
-                if @schedule.save
-                    format.html { redirect_to '/main', notice: 'Schedule was successfully created.' }
-                    format.json { render action: '/main', status: :created, location: @schedule }
-                else
-                    format.html { render action: '/main' }
-                    format.json { render json: @schedule.errors, status: :unprocessable_entity }
-                end
-            end
-        end
+        redirect_to '/main'
+    end
+    
+    def delete_schedule
+        Schedule.find(params[:id]).destroy
+        
+        redirect_to '/main'
+    end
+    
+    def update_schedule
+        Schedule.find(params[:editId]).update(title: params[:editTitle], content: params[:editContent], times: params[:editTimes])
+        
+        redirect_to '/main' 
+    end
+    
+    def new_diary
+        @days = Day.order(day: :desc).find_by(user_id: session[:id])
+        @days.update(diary: params[:diary], score: params[:score])
+        @user = User.find(session[:id])
+        @user.days.create(uid: @user[:uid], name: @user[:name], day: @days[:day]+1, goal: params[:goals])
+
+        redirect_to '/main' 
     end
     
     private
         def schedule_params
-            params.require(:schedule).permit(:title, :content, :times)
+            params.require(:schedule).permit(:title, :content, :times, :day)
         end
 end

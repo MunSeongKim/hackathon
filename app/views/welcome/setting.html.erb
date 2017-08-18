@@ -1,110 +1,47 @@
-<style>
-    body, h1 { color: white; }
-    body, html { height: 100%; font-family: "Noto Sans KR","Helvetica Neue",Helvetica,Arial,sans-serif; }
-    .bgimg {
-        background-image: url('assets/images/index.jpg');
-        min-height: 100%;
-        background-position: center;
-        background-size: cover;
-    }
-    
-    .header{
-    	position: absolute;
-    	top: calc(50% - 40px);
-    	left: calc(50% - 220px);
-    	z-index: 2;
-    }
-    
-    .header div{
-    	float: left;
-    	color: #fff;
-    	font-family: 'Noto Sans KR',, sans-serif;
-    	font-size: 40px;
-    	font-weight: 200;
-    }
-    
-    .header div span{
-    	color: #5379fa !important;
-    }
-    
-    .login{
-    	position: absolute;
-    	top: calc(50% - 75px);
-    	left: calc(50% - 50px);
-    	height: 150px;
-    	width: 350px;
-    	padding: 10px;
-    	z-index: 2;
-    }
-    
-    .login input[type=text]{
-    	width: 260px;
-    	height: 35px;
-    	background: transparent;
-    	border: 0;
-    	border-bottom: 1px solid rgba(255,255,255,0.7);
-    	border-radius: 2px;
-    	color: #fff;
-    	font-family: 'Noto Sans KR', sans-serif;
-    	font-size: 20px;
-    	font-weight: 400;
-    	padding: 4px;
-    }
-    
-    .login input[type=button]{
-    	width: 260px;
-    	height: 35px;
-    	background: #fff;
-    	border: 1px solid #fff;
-    	cursor: pointer;
-    	border-radius: 2px;
-    	color: #a18d6c;
-    	font-family: 'Exo', sans-serif;
-    	font-size: 16px;
-    	font-weight: 400;
-    	padding: 6px;
-    	margin-top: 10px;
-    }
-    
-    .login input[type=button]:hover{
-    	opacity: 0.8;
-    }
-    
-    .login input[type=button]:active{
-    	opacity: 0.6;
-    }
-    
-    .login input[type=text]:focus{
-    	outline: none;
-    	border: 0;
-    	border-color: white;
-    	border-bottom: 1px solid rgba(255,255,255,0.9);
-    }
-    
-    .login input[type=button]:focus{
-    	outline: none;
-    }
-    
-    input::-webkit-input-placeholder{
-       color: rgba(255,255,255,0);
-    }
-    
-    input::-moz-input-placeholder{
-       color: rgba(255,255,255,0);
-    }
-</style>
+<!-- CSS for use only this page -->
+    <style>
+        body, h1 { color: white; }
+        body, html { height: 100%; font-family: "Noto Sans KR","Helvetica Neue",Helvetica,Arial,sans-serif; }
+        .bgimg {
+            background-image: url('assets/images/index.jpg');
+            min-height: 100%;
+            background-position: center;
+            background-size: cover;
+        }
+        
+        a {
+            text-decoration:none !important;
+            border: 0;
+        }
+        
+        img {
+          background-color: transparent;
+        }
+        
+    </style>
+
+<!-- Rending page design -->
+    <div class="bgimg w3-display-container w3-text-white">
+      <div class="w3-display-middle">
+        <h1 class="w3-jumbo w3-animate-top">DIARY FOR</h1>
+        <div class="w3-center">
+            <%= form_for(@user, url: "/nicknameSave", html: { id: "nicknameSave", method: :post }) do |f| %>
+                <%= f.text_field :name, class: "w3-input w3-transparent w3-text-white w3-hover-shadow w3-margin-bottom w3-center", maxlength:30, value: @username %>
+            	<%= f.submit "Start", data: { confirm: 'Save?', disable_with: 'Saving...' }, class: "w3-btn w3-block w3-blue-grey w3-text-white w3-round" %>
+            <% end %>
+        </div>
+      </div>
+    </div>
+<!--// Reding page end -->
 
 
 
-<div class="bgimg w3-display-container w3-text-white">
-    <div class="header">
-		<div>Diary for</div>
-	</div>
-	<br>
-	<div class="login">
-	    <%= form_for(@user, url: "/nicknameSave", html: { id: "nicknameSave", method: :post }) do |f| %>
-	        <%= f.text_field :name, class: "w3-input", maxlength:30, value: @username %>
-			<%= f.submit "Start", data: { confirm: 'Save?', disable_with: 'Saving...' } %>
-		<% end %>
-	</div>
-</div>
+
+<!-- Form that temporary save user's information -->
+  <%= form_for(@user, url: "/", html: { id: "userInfo", method: :post }) do |f| %>
+    <%= f.hidden_field :id %>
+    <%= f.hidden_field :uid %>
+    <%= f.hidden_field :name %>
+    <%= f.hidden_field :snstype %>
+  <% end %>
+  

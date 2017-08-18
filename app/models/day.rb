@@ -1,4 +1,4 @@
 class Day < ActiveRecord::Base
-    belongs_to :day
-    has_many :schedule, dependent: :destroy
+    belongs_to :users
+    has_many :schedules, dependent: :destroy
 end

@@ -13,7 +13,12 @@ Rails.application.routes.draw do
   post 'nicknameSave' => 'welcome#update_name'
   get 'main' => 'main#main'
   
-  post 'new_schedule' => 'main#new_schedule'
+  post 'newSchedule' => 'main#new_schedule'
+  post 'saveCheck/:id' => 'main#save_check'
+  delete 'deleteSchedule/:id' => 'main#delete_schedule'
+  patch 'updateSchedule' => 'main#update_schedule'
+  
+  post 'newDiary' => 'main#new_diary'
   
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

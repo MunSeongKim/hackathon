@@ -33,17 +33,14 @@ class WelcomeController < ApplicationController
     end
     # Saving nickname & move to /main
     def update_name
+        # Updating user nickname part
         @user = User.find(session[:id])
-        @user[:name] = params.require(:user).permit(:name)[:name]
-        @user.save
+        @user.update(name: params.require(:user).permit(:name)[:name])
         
+        # Create data in days table
         date = Time.now + 32400
-        @day = Day.new()
-        @day[:uid] = @user[:id]
-        @day[:name] = @user[:name]
-        @day[:day] = date.strftime("%Y-%m-%d")
-        @day.save
-        
+        @day = @user.days.create(uid: @user[:uid], name: @user[:name], day: date.strftime("%Y-%m-%d"))
+
         redirect_to '/main'
     end
     
