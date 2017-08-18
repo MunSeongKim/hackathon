@@ -33,15 +33,3 @@
       </div>
     </div>
 <!--// Reding page end -->
-
-
-
-
-<!-- Form that temporary save user's information -->
-  <%= form_for(@user, url: "/", html: { id: "userInfo", method: :post }) do |f| %>
-    <%= f.hidden_field :id %>
-    <%= f.hidden_field :uid %>
-    <%= f.hidden_field :name %>
-    <%= f.hidden_field :snstype %>
-  <% end %>
-  

@@ -1,4 +1,5 @@
 class WelcomeController < ApplicationController
+    @date = Time.now + 32400
     def index
         @user = User.new
     end
@@ -7,6 +8,7 @@ class WelcomeController < ApplicationController
     def create
         @user = User.new(user_params)
         session[:id] = user_params[:id]
+        
         begin
             respond_to do |format|
                 if @user.save
@@ -18,13 +20,13 @@ class WelcomeController < ApplicationController
                 end
             end
         rescue ActiveRecord::RecordNotUnique
-            redirect_to '/main'
+            redirect_to "/main/#{@date.strftime("%Y-%m-%d")}"
         end
     end
     # Already exist user
     def session_rec
         session[:id] = user_params[:id]
-        redirect_to '/main'
+        redirect_to "/main/#{@date.strftime("%Y-%m-%d")}"
     end
     
     def setting
@@ -38,10 +40,9 @@ class WelcomeController < ApplicationController
         @user.update(name: params.require(:user).permit(:name)[:name])
         
         # Create data in days table
-        date = Time.now + 32400
-        @day = @user.days.create(uid: @user[:uid], name: @user[:name], day: date.strftime("%Y-%m-%d"))
+        @day = @user.days.create(uid: @user[:uid], name: @user[:name], day: @date.strftime("%Y-%m-%d"))
 
-        redirect_to '/main'
+        redirect_to "/main/#{@date.strftime("%Y-%m-%d")}"
     end
     
     private

@@ -11,11 +11,11 @@ Rails.application.routes.draw do
   
   post 'save_id' => 'welcome#session_rec'
   post 'nicknameSave' => 'welcome#update_name'
-  get 'main' => 'main#main'
+  get 'main/:date' => 'main#main'
   
   post 'newSchedule' => 'main#new_schedule'
   post 'saveCheck/:id' => 'main#save_check'
-  delete 'deleteSchedule/:id' => 'main#delete_schedule'
+  delete 'deleteSchedule/:id/:day' => 'main#delete_schedule'
   patch 'updateSchedule' => 'main#update_schedule'
   
   post 'newDiary' => 'main#new_diary'

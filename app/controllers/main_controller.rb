@@ -3,8 +3,11 @@ class MainController < ApplicationController
         @user = User.find(session[:id])
         @username = @user[:name]
         
+        @firstDate = Day.order(day: :asc).find_by(user_id: session[:id])[:day].to_s.split("-")[2]
+        @lastDate = Day.order(day: :desc).find_by(user_id: session[:id])[:day].to_s.split("-")[2]
+        
         # For checking first comming & searching schedule is related today
-        @days = Day.order(day: :desc).find_by(user_id: session[:id])
+        @days = Day.order(day: :desc).find_by(user_id: session[:id], day: params[:date])
         
         @diary = @days[:diary]
         
@@ -23,7 +26,7 @@ class MainController < ApplicationController
         
         # Part of rendering schedule related day
         date = @days[:day]
-        @sc = Schedule.order(id: :desc).where(day: date).select(:id, :times, :title, :content, :check).to_a
+        @sc = Schedule.order(id: :desc).where(day: date).select(:id, :day, :times, :title, :content, :check).to_a
         
         # For graph is about goal of this week
         checkCnt = Schedule.where(day: date, check: true).count
@@ -48,25 +51,25 @@ class MainController < ApplicationController
         # create schedule
         @schedule = findDay.schedules.create(schedule_params)
         
-        redirect_to '/main'
+        redirect_to "/main/#{findDay[:day]}"
     end
     
     def save_check
-        Schedule.find(params[:id]).update(check: true)
+        @schedule = Schedule.find(params[:id]).update(check: true)
         
-        redirect_to '/main'
+        redirect_to "/main/#{@schedule[:day]}"
     end
     
     def delete_schedule
         Schedule.find(params[:id]).destroy
         
-        redirect_to '/main'
+        redirect_to "/main/#{params[:day]}"
     end
     
     def update_schedule
-        Schedule.find(params[:editId]).update(title: params[:editTitle], content: params[:editContent], times: params[:editTimes])
+        @schedule = Schedule.find(params[:editId]).update(title: params[:editTitle], content: params[:editContent], times: params[:editTimes])
         
-        redirect_to '/main' 
+        redirect_to "/main/#{@schedule[:day]}"
     end
     
     def new_diary
@@ -75,7 +78,7 @@ class MainController < ApplicationController
         @user = User.find(session[:id])
         @user.days.create(uid: @user[:uid], name: @user[:name], day: @days[:day]+1, goal: params[:goals])
 
-        redirect_to '/main' 
+        redirect_to "/main/#{@days[:day]+1}"
     end
     
     private
